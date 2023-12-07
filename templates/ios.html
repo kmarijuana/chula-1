@@ -1,0 +1,1033 @@
+<html>
+  <head>
+    <script src="./aframe.min.js"></script>
+    <script src="./jquery-3.6.0.min.js"></script>
+
+    <script src="./aframe-stereo-component.min.js"></script>
+  </head>
+  <body>
+    <script>
+      let interval = null;
+      let doprocess = null;
+      let i = 0;
+      let data = null;
+      let currentVideoIndex_ = 0;
+      document.addEventListener("DOMContentLoaded", function () {
+        console.log("AAAaaaaaaaaa");
+        const sceneEl = document.querySelector("a-scene");
+        sceneEl.addEventListener("loaded", function () {
+          $(`.asset-video`)[0].pause();
+          $("#component-c").attr("visible", true);
+          $("#component-c .js-action").each(function (i, v) {
+            $(v).addClass("raycastable");
+          });
+        });
+        sceneEl.addEventListener("enter-vr", function () {
+        });
+        $(`.asset-video`).on("ended", video_end);
+        $("#btn-play").on("click", () => {
+          $(`#asset-video-${currentVideoIndex_}`)[0].play();
+          $("#btn-play").removeClass("raycastable").attr("visible", false);
+
+          $("#btn-pause").addClass("raycastable").attr("visible", true);
+          $("#btn-end").addClass("raycastable").attr("visible", true);
+        });
+        function clearComponent() {
+          $("#component-quiz").attr("visible", false);
+          $("#component-quiz .js-action").each(function (i, v) {
+            $(v).removeClass("raycastable");
+          });
+
+          $("#component-answer").attr("visible", false);
+          $("#component-answer .js-action").each(function (i, v) {
+            $(v).removeClass("raycastable");
+          });
+
+          $("#component-summary").attr("visible", false);
+          $("#component-summary .js-action").each(function (i, v) {
+            $(v).removeClass("raycastable");
+          });
+        }
+
+        $("#btn-goto-a").on("click", () => {
+          currentVideoIndex_ = 1;
+          $("#video-eye-left").attr(
+            "src",
+            `#asset-video-${currentVideoIndex_}`
+          );
+          $("#video-eye-right").attr(
+            "src",
+            `#asset-video-${currentVideoIndex_}`
+          );
+
+          $("#btn-goto-a").removeClass("raycastable").attr("visible", false);
+          $("#btn-goto-b").removeClass("raycastable").attr("visible", false);
+          $("#btn-play").addClass("raycastable").attr("visible", true);
+          $("#btn-play").click();
+
+          $("#component-c").attr("visible", true);
+          $("#component-c .js-action").each(function (i, v) {
+            $(v).addClass("raycastable");
+          });
+        });
+        $("#btn-goto-b").on("click", () => {
+          currentVideoIndex_ = 2;
+          $("#video-eye-left").attr(
+            "src",
+            `#asset-video-${currentVideoIndex_}`
+          );
+          $("#video-eye-right").attr(
+            "src",
+            `#asset-video-${currentVideoIndex_}`
+          );
+
+          $("#btn-goto-a").removeClass("raycastable").attr("visible", false);
+          $("#btn-goto-b").removeClass("raycastable").attr("visible", false);
+          $("#btn-play").addClass("raycastable").attr("visible", true);
+          $("#btn-play").click();
+
+          $("#component-c").attr("visible", true);
+          $("#component-c .js-action").each(function (i, v) {
+            $(v).addClass("raycastable");
+          });
+        });
+        function video_end() {
+          
+        if (currentVideoIndex_ == 0) {
+          $("#video-controler").attr("visible", true);
+          $("#btn-goto-a").addClass("raycastable").attr("visible", true);
+          $("#btn-goto-b").addClass("raycastable").attr("visible", true);
+          $("#btn-play-1").removeClass("raycastable").attr("visible", false);
+          $("#btn-pause-1").removeClass("raycastable").attr("visible", false);
+          $("#btn-end").removeClass("raycastable").attr("visible", false);
+        } else {
+          $("#btn-play-1").removeClass("raycastable").attr("visible", false);
+          $("#btn-pause-1").removeClass("raycastable").attr("visible", false);
+          $("#btn-end").removeClass("raycastable").attr("visible", false);
+
+          $("#btn-replay").addClass("raycastable").attr("visible", true);
+          $("#btn-quiz").addClass("raycastable").attr("visible", true);
+
+          $("#bg_black").attr("visible", true);
+        }
+
+        $("#component-c").attr("visible", false);
+        $("#component-c .js-action").each(function (i, v) {
+          $(v).removeClass("raycastable");
+        });
+        
+        $(`.asset-video`)[0].pause();
+
+        console.log(currentVideoIndex_)
+
+        console.log(currentVideoIndex_)
+        console.log(currentVideoIndex_)
+        console.log(currentVideoIndex_)
+
+      }
+        $("#btn-end").on("click", video_end);
+        $("#btn-pause").on("click", () => {
+          $("#btn-play").addClass("raycastable").attr("visible", true);
+
+          $("#btn-pause").removeClass("raycastable").attr("visible", false);
+          $("#btn-end").removeClass("raycastable").attr("visible", false);
+          $("#btn-replay").removeClass("raycastable").attr("visible", false);
+          $("#btn-quiz").removeClass("raycastable").attr("visible", false);
+          $(`.asset-video`)[0].pause();
+        });
+        function replay() {
+          $(`#asset-video-${currentVideoIndex_}`)[0].pause();
+          $(`#asset-video-${currentVideoIndex_}`)[0].currentTime = 0;
+
+          $("#btn-play").addClass("raycastable").attr("visible", true);
+          $("#btn-pause").removeClass("raycastable").attr("visible", false);
+          $("#btn-end").removeClass("raycastable").attr("visible", false);
+
+          $("#btn-replay").removeClass("raycastable").attr("visible", false);
+          $("#btn-quiz").removeClass("raycastable").attr("visible", false);
+          $("#bg_black").attr("visible", false);
+
+          $("#component-c").attr("visible", true);
+          $("#component-c .js-action").each(function (i, v) {
+            $(v).addClass("raycastable");
+          });
+        }
+        $("#btn-replay").on("click", replay);
+        // let question_index = 1;
+        let [question_index, score, max] = [1, 0, 2];
+        function playQuiz() {
+          console.log(question_index);
+          $("#question-a").attr("src", `#asset-Q${question_index}`);
+          $("#question-b").attr("src", `#asset-Q${question_index}`);
+          $("#btn-1").attr("src", `#asset-Q${question_index}-btn-01`);
+          $("#btn-2").attr("src", `#asset-Q${question_index}-btn-02`);
+          $("#btn-3").attr("src", `#asset-Q${question_index}-btn-03`);
+          $("#btn-4").attr("src", `#asset-Q${question_index}-btn-04`);
+          $("#answer").attr("src", `#asset-Q${question_index}A`);
+
+          // setTimeout(() => {
+          $("#asset-video-0")[0].pause();
+          // }, 100);
+          $("#btn-play").removeClass("raycastable").attr("visible", false);
+          $("#btn-pause").removeClass("raycastable").attr("visible", false);
+          $("#btn-end").removeClass("raycastable").attr("visible", false);
+
+          $("#btn-replay").removeClass("raycastable").attr("visible", false);
+          $("#btn-quiz").removeClass("raycastable").attr("visible", false);
+          $("#bg_black").attr("visible", false);
+
+       
+          $("#component-quiz").attr("visible", true);
+          $("#component-quiz .js-action").each(function (i, v) {
+            $(v).addClass("raycastable");
+          });
+        }
+        function answer(v) {
+          if (question_index == 1) {
+            v == 4
+              ? ($("#answer-a").attr("visible", true), score++)
+              : $("#answer-b").attr("visible", true);
+          }
+          if (question_index == 2) {
+            v == 3
+              ? ($("#answer-a").attr("visible", true), score++)
+              : $("#answer-b").attr("visible", true);
+          }
+
+          $("#component-quiz").attr("visible", false);
+          $("#component-quiz .js-action").each(function (i, v) {
+            $(v).removeClass("raycastable");
+          });
+
+          // let temps = $(".raycastable")
+          // $(".raycastable")
+          //   .addClass("raycastable-stop")
+          //   .removeClass("raycastable");
+
+          setTimeout(() => {
+            $("#answer-b").attr("visible", false);
+            $("#answer-a").attr("visible", false);
+            $("#component-answer").attr("visible", true);
+            $("#component-answer .js-action").each(function (i, v) {
+              $(v).addClass("raycastable");
+            });
+          }, 3000);
+        }
+
+        $(".btn-close").on("click", (e) => {
+          console.log(e.currentTarget);
+          console.log($(e.currentTarget).data("component"));
+          clearComponent();
+          video_end();
+        });
+        $("#btn-quiz").on("click", () => {
+          // alert("!")
+          question_index = 1;
+
+          //   id="btn-1"
+          // id="question-b"
+          // id="answer"
+          // <img src="./images/cut/Q-1.png" id="asset-Q1" />
+          // <img src="./images/cut/Q-1-Answer.png" id="asset-Q1A" />
+
+          // <img src="./images/cut/A-1-01.png" id="asset-Q1-btn-01" />
+          // <img src="./images/cut/A-1-02.png" id="asset-Q1-btn-02" />
+          // <img src="./images/cut/A-1-03.png" id="asset-Q1-btn-03" />
+          // <img src="./images/cut/A-1-04.png" id="asset-Q1-btn-04" />
+
+          playQuiz(question_index);
+        });
+        $("#btn-next").on("click", () => {
+          question_index++;
+
+          $("#component-answer").attr("visible", false);
+          $("#component-answer .js-action").each(function (i, v) {
+            $(v).removeClass("raycastable");
+          });
+          if (question_index < max + 1) {
+            return playQuiz(question_index);
+          }
+
+          // txt-data-score
+          $("#txt-data-score").attr("value", `${score}/${max}`);
+          $("#component-summary").attr("visible", true);
+          $("#component-summary .js-action").each(function (i, v) {
+            $(v).addClass("raycastable");
+          });
+        });
+
+        $("#btn-1").on("click", () => answer(1));
+        $("#btn-2").on("click", () => answer(2));
+        $("#btn-3").on("click", () => answer(3));
+        $("#btn-4").on("click", () => answer(4));
+
+        $("#btn-back2main").on("click", () => {
+          window.location.href = "./";
+        });
+
+        let ii = 0;
+        let defualt = -0.5;
+        let inter = null;
+        $("#btn-play").on("click", () => {
+          // if (currentVideoIndex == 0) {
+            $("#mysky").attr("visible", false);
+            $("#video-eye-left").attr("visible", true);
+            $("#video-eye-right").attr("visible", true);
+            asset = $(`#asset-video-${currentVideoIndex_}`);
+          // } else {
+          //   $("#mysky").attr("visible", true);
+          //   $("#video-eye-left").attr("visible", false);
+          //   $("#video-eye-right").attr("visible", false);
+          //   asset = $(`#asset-video-index${currentVideoIndex}`);
+          // }
+          asset.on("timeupdate", function (event) {
+            onTrackedVideoFrame(this.currentTime, this.duration);
+          });
+          asset[0].play();
+          $("#btn-play").removeClass("raycastable").attr("visible", false);
+          $("#btn-pause").addClass("raycastable").attr("visible", true);
+        });
+        function onTrackedVideoFrame(currentTime, duration) {
+          let m = ((currentTime / duration) * 100) / 100;
+          document
+            .getElementById("txt-currenttime")
+            .setAttribute(
+              "text",
+              "value",
+              parseFloat(currentTime / 100).toFixed(2)
+            );
+          document
+            .getElementById("txt-maxtime")
+            .setAttribute(
+              "text",
+              "value",
+              parseFloat(duration / 100).toFixed(2)
+            );
+          let ee = m / 2;
+          let bb = defualt + ee;
+          document
+            .getElementById("controller")
+            .setAttribute("position", `${bb} 0 0.01 `);
+          document
+            .getElementById("controller")
+            .setAttribute("geometry", "width", m);
+        }
+        $("#btn-pause").on("click", () => {
+          // if (currentVideoIndex == 0) {
+            asset = $(`#asset-video-${currentVideoIndex_}`);
+          // } else {
+          //   asset = $(`#asset-video-index${currentVideoIndex}`);
+          // }
+          asset[0].pause();
+          $("#btn-play").addClass("raycastable").attr("visible", true);
+          $("#btn-pause").removeClass("raycastable").attr("visible", false);
+        });
+        $("#btn-forward").on("click", () => {
+          asset[0].currentTime += 10;
+        });
+
+        $("#btn-backward").on("click", () => {
+          asset[0].currentTime -= 10;
+        });
+        $("#btn-mute").on("click", () => {
+          $("#btn-mute").removeClass("raycastable").attr("visible", false);
+          $("#btn-sound").addClass("raycastable").attr("visible", true);
+          asset.prop("muted", true);
+        });
+        $("#btn-sound").on("click", () => {
+          $("#btn-sound").removeClass("raycastable").attr("visible", false);
+          $("#btn-mute").addClass("raycastable").attr("visible", true);
+          asset.prop("muted", false);
+        });
+        $("#btn-up").on("click", () => {
+          if (asset[0].playbackRate >= 3.0) {
+            return;
+          }
+          asset[0].playbackRate += 0.5;
+          document
+            .getElementById("txt-speed")
+            .setAttribute(
+              "text",
+              "value",
+              parseFloat(asset[0].playbackRate).toFixed(1)
+            );
+        });
+        $("#btn-down").on("click", () => {
+          if (asset[0].playbackRate <= 0.5) {
+            return;
+          }
+          asset[0].playbackRate -= 0.5;
+          document
+            .getElementById("txt-speed")
+            .setAttribute(
+              "text",
+              "value",
+              parseFloat(asset[0].playbackRate).toFixed(1)
+            );
+        });
+      });
+    </script>
+    <a-scene
+      loading-screen="dotsColor: red; backgroundColor: black"
+      background="color: #000000"
+      environment
+      cursor="rayOrigin: mouse; fuse: false"
+      raycaster="objects: .raycastable"
+    >
+      <a-assets>
+        <video
+          id="asset-video-0"
+          class="asset-video"
+          preload="auto"
+          width="160"
+          height="90"
+          crossorigin="anonymous"
+          controls="false"
+          playsinline="true"
+          webkit-playsinline="true"
+          autostart="0"
+          src="./room/4.MP4"
+          type="video/mp4"
+        ></video>
+        <video
+          id="asset-video-1"
+          class="asset-video"
+          preload="auto"
+          width="160"
+          height="90"
+          crossorigin="anonymous"
+          controls="false"
+          playsinline="true"
+          webkit-playsinline="true"
+          autostart="0"
+          src="./room/1.mp4"
+          type="video/mp4"
+        ></video>
+        <video
+          id="asset-video-2"
+          class="asset-video"
+          preload="auto"
+          width="160"
+          height="90"
+          crossorigin="anonymous"
+          controls="false"
+          playsinline="true"
+          webkit-playsinline="true"
+          autostart="0"
+          src="./room/2.mp4"
+          type="video/mp4"
+        ></video>
+
+        <img src="./images/cut/Q-1.png" id="asset-Q1" />
+        <img src="./images/cut/Q-1-Answer.png" id="asset-Q1A" />
+
+        <img src="./images/cut/A-1-01.png" id="asset-Q1-btn-01" />
+        <img src="./images/cut/A-1-02.png" id="asset-Q1-btn-02" />
+        <img src="./images/cut/A-1-03.png" id="asset-Q1-btn-03" />
+        <img src="./images/cut/A-1-04.png" id="asset-Q1-btn-04" />
+
+        <img src="./images/cut/Q-2.png" id="asset-Q2" />
+        <img src="./images/cut/Q-1-Answer.png" id="asset-Q2A" />
+
+        <img src="./images/cut/A-2-01.png" id="asset-Q2-btn-01" />
+        <img src="./images/cut/A-2-02.png" id="asset-Q2-btn-01" />
+        <img src="./images/cut/A-2-03.png" id="asset-Q2-btn-01" />
+        <img src="./images/cut/A-2-04.png" id="asset-Q2-btn-01" />
+
+        <img src="./images/cut/btn-back-homr.png" id="asset-btn-back2home" />
+
+        <img src="./images/cut/btn-close.png" id="asset-btn-close" />
+
+        <img src="./images/cut/btn-goto-quiz.png" id="asset-btn-goto-quiz" />
+        <img src="./images/cut/btn-next.png" id="asset-btn-next" />
+
+        <img src="./images/cut/btn-play.png" id="asset-btn-play" />
+
+        <img src="./images/cut/btn-replay.png" id="asset-btn-replay" />
+        <img src="./images/cut/btn-result.png" id="asset-btn-result" />
+
+        <img src="./images/cut/popup-bg.png" id="asset-bg-popup" />
+
+        <img src="./images/cut/txt-result.png" id="asset-txt-result" />
+        <img src="./images/cut/txt-score.png" id="asset-txt-score" />
+
+        <img src="./images/cut/sign-incorrect.png" id="asset-sign-incorrect" />
+        <img src="./images/cut/sign-correct.png" id="asset-sign-correct" />
+
+        <img src="./images/cut/sign-incorrect.png" id="left" />
+        <img src="./images/cut/sign-correct.png" id="right" />
+      </a-assets>
+
+      <a-entity
+        id="background"
+        position="0 0 0"
+        geometry="primitive: sphere; radius: 2.0"
+        material="color: red; side: back; shader: flat"
+        scale="0.001 0.001 0.001"
+        visible="false"
+        class="raycastable"
+      >
+      </a-entity>
+
+      <a-entity id="rig">
+        <a-entity
+          position="0 1.6 5"
+          id="camera"
+          camera
+          look-controls="magicWindowTrackingEnabled: false; touchEnabled: true; mouseEnabled: true; "
+          cursor-visible="false"
+          stereocam="eye:left;"
+        >
+          <a-entity
+            id="fadeBackground"
+            geometry="primitive: sphere; radius: 2.5"
+            material="color: black; side: back; shader: flat; transparent: true; opacity: 0.6"
+            visible="false"
+          >
+          </a-entity>
+
+          <!-- <a-entity id="logs" position="0 -2 -5">
+            <a-text
+              id="dddddddddddd"
+              font="kelsonsans"
+              value="ABC"
+              width="6"
+              position="-.5 0.5 0"
+              rotation="0 0 0"
+            ></a-text>
+            <a-text
+              id="logsssssss"
+              font="kelsonsans"
+              value="ABC"
+              width="6"
+              position="-.5 0 0"
+              rotation="0 0 0"
+            ></a-text>
+            <a-text
+              id="logsssssss2"
+              font="kelsonsans"
+              value="ABC"
+              width="6"
+              position="-.5 -0.5 0"
+              rotation="0 0 0"
+            ></a-text>
+          </a-entity> -->
+
+          <a-plane
+            id="answer-a"
+            visible="false"
+            geometry="primitive: plane; width: 4.5; height: 1"
+            material="src: #asset-sign-incorrect; transparent: true; alphaTest: 0"
+            position="0 0 -2"
+            animation__scale="property: scale; to: 1.05 1.05 1.05; dur: 200; startEvents: mouseenter"
+            animation__scale_reverse="property: scale; to: 1 1 1; dur: 200; startEvents: mouseleave"
+            scale="1 1 1"
+          ></a-plane>
+
+          <a-plane
+            id="answer-b"
+            visible="false"
+            geometry="primitive: plane; width: 4.5; height: 1"
+            material="src: #asset-sign-correct; transparent: true; alphaTest: 0"
+            position="0 0 -2"
+            animation__scale="property: scale; to: 1.05 1.05 1.05; dur: 200; startEvents: mouseenter"
+            animation__scale_reverse="property: scale; to: 1 1 1; dur: 200; startEvents: mouseleave"
+            scale="1 1 1"
+          ></a-plane>
+        </a-entity>
+
+        <a-entity id="eye">
+          <a-videosphere
+            id="video-eye-left"
+            rotation="0 0 0"
+            material="shader: flat; side: back; npot: true; src: #asset-video-0; repeat: 1 1;"
+            stereo="eye:left;mode:half;playOnClick:false"
+          ></a-videosphere>
+
+          <a-videosphere
+            id="video-eye-right"
+            rotation="0 0 0"
+            material="shader: flat; side: back; npot: true; src: #asset-video-0; repeat: 1 1;"
+            stereo="eye:right;mode:half;playOnClick:false"
+          ></a-videosphere>
+        </a-entity>
+
+        <a-entity id="hand">
+          <a-entity
+            id="hand-left"
+            oculus-touch-controls="hand: left"
+            oculus-thumbstick-controls
+            raycaster="objects: .raycastable"
+            line="color: #118A7E"
+            laser-controls="hand: left"
+          ></a-entity>
+          <a-entity
+            id="hand-right"
+            oculus-touch-controls="hand: right"
+            oculus-thumbstick-controls
+            orientationOffset="x: 0; y:10; z: 0"
+            raycaster="objects: .raycastable"
+            line="color: #118A7E"
+            laser-controls="hand: right"
+          ></a-entity>
+        </a-entity>
+        <a-entity
+          id="bg_black"
+          visible="false"
+          position="0 -2 0.075"
+          geometry="primitive: circle; radius: 300"
+          material="color: #000000; shader: flat; opacity: 0.5; vertexColors: face;depthTest: false; depthWrite: false; "
+        ></a-entity>
+      </a-entity>
+      <a-entity position="0 2 -15" id="video-controler" visible="false">
+        <a-entity
+          id="btn-goto-a"
+          visible="false"
+          position="-4 0 0.005"
+          scale="5 5 1"
+          geometry="primitive: plane; height: 0.3"
+          material="shader: flat; color: #7fae19"
+          class="js-action"
+          animation__scale="property: scale; to: 5.5 5.5 1.05; dur: 200; startEvents: mouseenter"
+          animation__scale_reverse="property: scale; to: 5 5 1; dur: 200; startEvents: mouseleave"
+        >
+          <a-text
+            position="0 0 0.1"
+            text="width: 2; align: center; wrapCount: 35; color: #FFFFFF; value: Go to A; alphaTest: 1"
+          ></a-text>
+        </a-entity>
+        <a-entity
+          id="btn-goto-b"
+          visible="false"
+          position="4 0 0.005"
+          scale="5 5  1"
+          geometry="primitive: plane; height: 0.3"
+          material="shader: flat; color: #7fae19"
+          class="js-action"
+          animation__scale="property: scale; to: 5.5 5.5 1.05; dur: 200; startEvents: mouseenter"
+          animation__scale_reverse="property: scale; to: 5 5 1; dur: 200; startEvents: mouseleave"
+        >
+          <a-text
+            position="0 0 0.1"
+            text="width: 2; align: center; wrapCount: 35; color: #FFFFFF; value: Go to B; alphaTest: 1"
+          ></a-text>
+        </a-entity>
+        <a-plane
+          id="btn-replay"
+          visible="false"
+          geometry="primitive: plane; width: 7; height: 2"
+          material="src: #asset-btn-replay; transparent: true; alphaTest: 0"
+          position="-4 0 0.005"
+          scale="1 1 1"
+        ></a-plane>
+        <a-plane
+          id="btn-quiz"
+          visible="false"
+          geometry="primitive: plane; width: 7; height: 2"
+          material="src: #asset-btn-goto-quiz; transparent: true; alphaTest: 0"
+          position="4 0 0.005"
+          scale="1 1 1"
+        ></a-plane>
+      </a-entity>
+      <a-entity id="ui" position="0 1.6 -2.5">
+        <a-entity
+          visible="false"
+          id="component-quiz"
+          position="0 0 -12.5"
+          rotation="0 0 0"
+          geometry="primitive: plane; width: 22; height: 14"
+          material="color: #000000; shader: flat; opacity: 0.5; src: #asset-bg-popup"
+        >
+          <a-entity id="navbar" position="0 5.21451 0.075" scale="1 1 0">
+            <a-plane
+              geometry="primitive: plane; width: 2; height: 2"
+              material="src: #asset-btn-close; transparent: true; alphaTest: 0.1"
+              position="9 0 0.3"
+              class="btn-close js-action"
+              data-component="quiz"
+              animation__scale="property: scale; to: 1.05 1.05 1.05; dur: 200; startEvents: mouseenter"
+              animation__scale_reverse="property: scale; to: 1 1 1; dur: 200; startEvents: mouseleave"
+              onclick="document.getElementById('logsssssss').setAttribute('value', 'back')"
+            ></a-plane>
+          </a-entity>
+          <a-entity id="content" position="0 -1.13731 0.075">
+            <a-entity id="block-top" position="0 2.17627 0.075">
+              <a-plane
+                id="question-a"
+                geometry="primitive: plane; width: 15; height: 3"
+                material="src: #asset-Q1; transparent: true; alphaTest: 0.1"
+                scale="1 1 0"
+                position="0 1 0.3"
+              ></a-plane>
+            </a-entity>
+
+            <a-entity id="block-bottom" position="0 -2.88843 0.075">
+              <a-plane
+                id="btn-1"
+                position="-5.5 1 0.1"
+                scale=""
+                class="js-action"
+                geometry="primitive: plane; width: 10; height: 2"
+                material="src: #asset-Q1-btn-01;transparent: true; alphaTest: 0.1;"
+                animation__scale="property: scale; to: 1.05 1.05 1.05; dur: 200; startEvents: mouseenter"
+                animation__scale_reverse="property: scale; to: 1 1 1; dur: 200; startEvents: mouseleave"
+                onclick="document.getElementById('logsssssss').setAttribute('value', '1')"
+              >
+              </a-plane>
+              <a-plane
+                id="btn-2"
+                position="5.5 0.90909 0.1"
+                scale=""
+                class="js-action"
+                geometry="primitive: plane; width: 10; height: 2"
+                material="src: #asset-Q1-btn-02; transparent: true; alphaTest: 0.1"
+                animation__scale="property: scale; to: 1.05 1.05 1.05; dur: 200; startEvents: mouseenter"
+                animation__scale_reverse="property: scale; to: 1 1 1; dur: 200; startEvents: mouseleave"
+                onclick="document.getElementById('logsssssss').setAttribute('value', '2')"
+              >
+              </a-plane>
+              <a-plane
+                id="btn-3"
+                position="-5.5 -1 0.1"
+                scale=""
+                class="js-action"
+                geometry="primitive: plane; width: 10; height: 2"
+                material="src: #asset-Q1-btn-03; transparent: true; alphaTest: 0.1"
+                animation__scale="property: scale; to: 1.05 1.05 1.05; dur: 200; startEvents: mouseenter"
+                animation__scale_reverse="property: scale; to: 1 1 1; dur: 200; startEvents: mouseleave"
+                onclick="document.getElementById('logsssssss').setAttribute('value', '3')"
+              >
+              </a-plane>
+              <a-plane
+                id="btn-4"
+                position="5.5 -1 0.1"
+                scale=""
+                class="js-action"
+                geometry="primitive: plane; width: 10; height: 2"
+                material="src: #asset-Q1-btn-04; transparent: true; alphaTest: 0.1"
+                animation__scale="property: scale; to: 1.05 1.05 1.05; dur: 200; startEvents: mouseenter"
+                animation__scale_reverse="property: scale; to: 1 1 1; dur: 200; startEvents: mouseleave"
+                onclick="document.getElementById('logsssssss').setAttribute('value', '4')"
+              >
+              </a-plane>
+            </a-entity>
+          </a-entity>
+        </a-entity>
+        <a-plane
+          visible="false"
+          id="component-answer"
+          position="0 0 -12.5"
+          rotation="0 0 0"
+          geometry="primitive: plane; width: 22; height: 14"
+          material="color: #000000; shader: flat; opacity: 0.5; src: #asset-bg-popup;"
+        >
+          <a-entity
+            id="navbar"
+            position="0 5.21451 0.075"
+            geometry="primitive: plane; width: 20; height: 2.03"
+            material="color: #000000; shader: flat; opacity: 0.6; vertexColors: face;alphaTest: 1"
+            scale="1 1 0"
+          >
+            <a-plane
+              geometry="primitive: plane; width: 2; height: 2"
+              material="src: #asset-btn-close; transparent: true; alphaTest: 0.1"
+              position="9 0 0.3"
+              class="btn-close js-action"
+              data-component="answer"
+              animation__scale="property: scale; to: 1.05 1.05 1.05; dur: 200; startEvents: mouseenter"
+              animation__scale_reverse="property: scale; to: 1 1 1; dur: 200; startEvents: mouseleave"
+              onclick="document.getElementById('logsssssss').setAttribute('value', 'back')"
+            ></a-plane>
+          </a-entity>
+          <a-entity id="content" position="0 -1.13731 0.075">
+            <a-entity
+              id="block-top"
+              position="0 3 0.075"
+              geometry="primitive: plane; width: 20; height: 4"
+              material="color: #000000; shader: flat; opacity: 0.6; vertexColors: face;alphaTest: 1"
+            >
+              <a-plane
+                id="question-b"
+                geometry="primitive: plane; width: 15; height: 3"
+                material="src: #asset-Q1; transparent: true; alphaTest: 0.1"
+                scale="1 1 0"
+                position="0 1 0.3"
+              ></a-plane>
+            </a-entity>
+            <a-entity
+              id="block-bottom"
+              position="0 -2 0.075"
+              geometry="primitive: plane; width: 20; height: 5.5"
+              material="color: #000000; shader: flat; opacity: 0.6; vertexColors: face;alphaTest: 1"
+            >
+              <a-entity
+                geometry="primitive: plane; width: 20; height: 4"
+                material="color: #000000; shader: flat; opacity: 0.65; vertexColors: face; alphaTest: 0.5"
+                position="0 2.5 0.075"
+              >
+                <a-plane
+                  id="answer"
+                  geometry="primitive: plane; width: 21; height: 5"
+                  material="src: #asset-Q1A; transparent: true; alphaTest: 0.5"
+                  scale="1 1 0"
+                  position="0 0 0.5"
+                ></a-plane>
+              </a-entity>
+              <a-plane
+                id="btn-next"
+                position="7 -1.25 0.5"
+                scale=""
+                class="js-action"
+                geometry="primitive: plane; width: 5.5; height: 1.7"
+                material="src: #asset-btn-next; transparent: true; alphaTest: 0.5"
+                animation__scale="property: scale; to: 1.05 1.05 1.05; dur: 200; startEvents: mouseenter"
+                animation__scale_reverse="property: scale; to: 1 1 1; dur: 200; startEvents: mouseleave"
+              >
+              </a-plane>
+            </a-entity>
+          </a-entity>
+        </a-plane>
+        <a-plane
+          visible="false"
+          id="component-summary"
+          position="0 0 -12.5"
+          rotation="0 0 0"
+          geometry="primitive: plane; width: 22; height: 14"
+          material="color: #000000; shader: flat; opacity: 0.5; src: #asset-bg-popup;"
+        >
+          <a-entity
+            id="navbar"
+            position="0 5.21451 0.075"
+            geometry="primitive: plane; width: 20; height: 2.03"
+            material="color: #000000; shader: flat; opacity: 0.6; vertexColors: face;alphaTest: 1"
+          >
+            <a-plane
+              geometry="primitive: plane; width: 2; height: 2"
+              material="src: #asset-btn-close; transparent: true; alphaTest: 0.5"
+              position="9 0 0.3"
+              class="btn-close js-action"
+              data-component="summary"
+              animation__scale="property: scale; to: 1.05 1.05 1.05; dur: 200; startEvents: mouseenter"
+              animation__scale_reverse="property: scale; to: 1 1 1; dur: 200; startEvents: mouseleave"
+              onclick="document.getElementById('logsssssss').setAttribute('value', 'back')"
+            ></a-plane>
+          </a-entity>
+          <a-entity id="content" position="0 -1.13731 0.075">
+            <a-plane
+              position="0 4.5 0.5"
+              class="js-action"
+              geometry="primitive: plane; width: 5.5; height: 1.5"
+              material="src: #asset-txt-result; transparent: true; alphaTest: 0.1"
+              animation__scale="property: scale; to: 1.05 1.05 1.05; dur: 200; startEvents: mouseenter"
+              animation__scale_reverse="property: scale; to: 1 1 1; dur: 200; startEvents: mouseleave"
+              scale="1.5 1.5 1.5"
+            >
+            </a-plane>
+            <a-entity position="0 1.5 0.05" scale="">
+              <a-text
+                id="txt-data-score"
+                position="0 0.5 0"
+                text="width: 80; wrapCount: 35; font: ./fonts/ChulaCharasNewBold-msdf/ChulaCharasNewBold-msdf.json; color: #FFFFFF; negate: false; value: 1/2; align: center; alphaTest: 1"
+              ></a-text>
+
+              <a-plane
+                position="0 -3.5 0.5"
+                class="js-action"
+                geometry="primitive: plane; width: 4.5; height: 1.75"
+                material="src: #asset-txt-score; transparent: true; alphaTest: 0.1"
+                animation__scale="property: scale; to: 1.05 1.05 1.05; dur: 200; startEvents: mouseenter"
+                animation__scale_reverse="property: scale; to: 1 1 1; dur: 200; startEvents: mouseleave"
+                scale="1.25 1.25 1.25"
+              >
+              </a-plane>
+            </a-entity>
+            <a-plane
+              id="btn-back2main"
+              position="0 -4 0.5"
+              scale=""
+              class="js-action"
+              geometry="primitive: plane; width: 5.5; height: 1.7"
+              material="src: #asset-btn-back2home; transparent: true; alphaTest: 0.5"
+              animation__scale="property: scale; to: 1.05 1.05 1.05; dur: 200; startEvents: mouseenter"
+              animation__scale_reverse="property: scale; to: 1 1 1; dur: 200; startEvents: mouseleave"
+            >
+            </a-plane>
+          </a-entity>
+        </a-plane>
+
+        <a-entity
+          id="component-c"
+          geometry="primitive: plane; height: 0; width: 0.69"
+          material="color: #0e0e0e; opacity: 0.7"
+          scale="3 3 3"
+          position="0 -5 -7.5"
+        >
+          <a-entity
+            id="navbar"
+            position=""
+            geometry="primitive: plane; width: 6; height: 0.75"
+            material="color: #000000; opacity: 0.5; shader: flat"
+            scale="1 1 0.1"
+          >
+            <a-entity
+              position="-2.75 0 0.075"
+              geometry="primitive: plane; height: 0; width: 0"
+              material="color: #000000; opacity: 0.5; shader: flat"
+            >
+              <a-plane
+                id="btn-back2"
+                class="js-action"
+                position="0 0 0.01"
+                geometry="height: 0.5; width: 0.5"
+                material="color: #FFFFFF; shader: flat; src: ./resources/back_arrow.png; alphaTest: 0.5"
+              ></a-plane>
+              <a-plane
+                id="btn-play"
+                class="js-action"
+                position="0.4 0 0.01"
+                geometry="height: 0.25; width: 0.25"
+                material="color: #FFFFFF; shader: flat; src: ./resources/icon-play.png; alphaTest: 0.5"
+                visible=""
+              ></a-plane>
+              <a-plane
+                id="btn-pause"
+                visible="false"
+                class=""
+                position="0.4 0 0.01"
+                geometry="height: 0.25; width: 0.25"
+                material="color: #FFFFFF; shader: flat; src: ./resources/icon-pause.png; alphaTest: 0.5"
+              ></a-plane>
+              <a-plane
+                id="btn-backward"
+                class="js-action"
+                position="0.8 0 0.01"
+                geometry="height: 0.25; width: 0.25"
+                material="color: #FFFFFF; shader: flat; src: ./resources/icon-backward.png; alphaTest: 0.5"
+              ></a-plane>
+              <a-plane
+                id="btn-forward"
+                class="js-action"
+                position="1.2 0 0.01"
+                geometry="height: 0.25; width: 0.25"
+                material="color: #FFFFFF; shader: flat; src: ./resources/icon-forward.png; alphaTest: 0.5"
+              ></a-plane>
+
+              <a-entity
+                id="navbar"
+                position="3.25 0.15151 0.075"
+                geometry="primitive: plane; width: 3.25; height: 0.25"
+                material="color: #000000; opacity: 0.6; shader: flat"
+                scale="1 1 1"
+              >
+                <a-text
+                  id="txt-videoname"
+                  position="0 0 0.01"
+                  text="anchor: center; width: 4; value: How to Dress Up in OR (Operating Room); wrapCount: 75; color: #ffffff; alphaTest: 1; whiteSpace: nowrap; align: center"
+                  scale="1 1 0.00001"
+                ></a-text>
+              </a-entity>
+
+              <a-plane
+                id="progressBar"
+                position="3.25 -0.15368 0.075"
+                width="0"
+                height="0.2"
+                color="red"
+                opacity="0.8"
+                visible=""
+                material="color: #d4d4d4"
+                geometry="width: 1; height: 0.025"
+                scale="2.5 2.5 1"
+              >
+                <a-text
+                  id="txt-currenttime"
+                  position="-0.61656 0 0.01"
+                  text="anchor: center; width: 2.5; value: 0.11; wrapCount: 75; color: #ffffff; alphaTest: 1; whiteSpace: nowrap; align: center"
+                  scale="1 1 0.00001"
+                ></a-text>
+                <a-entity
+                  video-controller=""
+                  id="controller"
+                  material="color: #00c703"
+                  geometry="primitive: plane; height: 0.025; width: 0"
+                  scale="1 1 0.00001"
+                  position="-0.5 0 0.075"
+                ></a-entity>
+                <a-text
+                  id="txt-maxtime"
+                  position="0.60312 0 0.01"
+                  text="anchor: center; width: 2.5; value: 1.49; wrapCount: 75; color: #ffffff; alphaTest: 1; whiteSpace: nowrap; align: center"
+                  scale="1 1 0.00001"
+                ></a-text>
+              </a-plane>
+              <a-plane
+                id="btn-mute"
+                class="js-action"
+                position="5.15 0 0.01"
+                geometry="height: 0.25; width: 0.25"
+                material="color: #FFFFFF; shader: flat; src: ./resources/icon-mute.png; alphaTest: 0.5"
+                visible=""
+              ></a-plane>
+              <a-plane
+                id="btn-sound"
+                class=""
+                position="5.15 0 0.01"
+                geometry="height: 0.25; width: 0.25"
+                material="color: #FFFFFF; shader: flat; src: ./resources/icon-sound.png; alphaTest: 0.5"
+                visible="false"
+              ></a-plane>
+
+              <a-plane
+                id="btn-up"
+                class="js-action"
+                position="5.5 0.25 0.01"
+                geometry="height: 0.15; width: 0.15"
+                material="color: #FFFFFF; shader: flat; src: ./resources/icon-up.png; alphaTest: 0.5"
+              ></a-plane>
+              <a-text
+                id="txt-speed"
+                position="5.5 0 0.47"
+                text="anchor: center; width: 7; value: 1.0; wrapCount: 75; color: #ffffff; alphaTest: 1; whiteSpace: nowrap; align: center"
+              ></a-text>
+              <a-plane
+                id="btn-down"
+                class="js-action"
+                position="5.5 -0.25 0.01"
+                geometry="height: 0.15; width: 0.15"
+                material="color: #FFFFFF; shader: flat; src: ./resources/icon-down.png; alphaTest: 0.5"
+              ></a-plane>
+            </a-entity>
+          </a-entity>
+        </a-entity>
+      </a-entity>
+    </a-scene>
+  </body>
+</html>
+<script>
+  const queryString = window.location.search;
+  console.log(queryString);
+  const urlParams = new URLSearchParams(queryString);
+  const k = urlParams.get("k");
+  console.log(k);
+  // ?product=shirt&color=blue&newuser&size=m
+  // !k
+  //   ? (window.location.href = "https://invirtualevent.com/kay/wtf/ar093/")
+  //   : "";
+</script>
+<script>
+  // k?
+  $(window).resize(function () {
+    if (window.matchMedia("(orientation: portrait)").matches) {
+      console.log("Aaaaa");
+      $("#audio-controler").attr("scale", "1 1 1");
+      $("#ui").attr("scale", "0.5 0.5 0.5").attr("position", "0 1.6 -2.5");
+    } else {
+      console.log("Bbbb");
+      $("#audio-controler").attr("scale", "3 3 3");
+      $("#ui").attr("scale", "10 10 10").attr("position", "0 1.6 20");
+    }
+
+    //resize just happened, pixels changed
+  });
+  // :''
+</script>
